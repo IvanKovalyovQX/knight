@@ -33,6 +33,8 @@ export class PlannerPage {
     dailyTrackerSettingWeightLocator: Locator;
     dailyTrackerSettingBloodPressureLocator: Locator;
     dailyTrackerSettingSleepLocator: Locator;
+    currentDateGridLocator: Locator;
+    gridCellLocator: Locator;
 
     constructor(page:Page) {
         this.page = page
@@ -67,6 +69,8 @@ export class PlannerPage {
         this.dailyTrackerSettingWeightLocator = page.locator('[data-testing="tracker-header:{Weight}"]')
         this.dailyTrackerSettingBloodPressureLocator = page.locator('[data-testing="tracker-header:{Blood Pressure}"]')
         this.dailyTrackerSettingSleepLocator = page.locator('[data-testing="tracker-header:{Sleep}"]')
+        this.currentDateGridLocator = page.locator('//button[@role="gridcell" and @aria-selected="true"]/div')
+        this.gridCellLocator = page.locator('[role="gridcell"]')
     }
 
     async open() {
@@ -111,7 +115,7 @@ export class PlannerPage {
         await this.sharedSubmitBtnLocator.click()
     }
 
-    async passTrackAllnowFlow() {
+    async passTrackAllNowFlow() {
         await this.trackAllNowBtnLocator.click()
         await this.moodBtnLocator.nth(Math.random()*4).click()
         await this.feelingBtnLocator.nth(Math.random()*14).click()
@@ -122,13 +126,30 @@ export class PlannerPage {
         await this.trackAllTemeperetureBtnlocator.click()
         await this.temperetureInputFiledLocator.fill(`${Math.floor(Math.random()*(104 - 96) + 96)}`)
         await this.sharedSubmitBtnLocator.nth(0).click()   
+        await this.temperetureInputFiledLocator.waitFor({state:'hidden'})
         await this.trackAllWeightBtnlocator.click()
         await this.weightInputFrildLocator.fill(`${Math.floor(Math.random()*(170 - 150) + 150)}`)
         await this.sharedSubmitBtnLocator.nth(0).click()
+        await this.weightInputFrildLocator.waitFor({state:'hidden'})
         await this.trackAllSleepBtnlocator.click()
         await this.hoursInputFieldLocator.fill(`${Math.floor(Math.random()*(14 - 6) + 6)}`)
         await this.sharedSubmitBtnLocator.nth(0).click()
+        await this.hoursInputFieldLocator.waitFor({state:'hidden'})
         await this.page.locator('[data-testing="button-submit"]', {hasText: 'Next'}).click()
         await this.page.locator('[data-testing="button-submit"]', {hasText: "Done"}).click()
+        await this.page.locator('[data-testing="button-submit"]', {hasText: "Done"}).waitFor({state:'hidden'})
+    }
+
+    async addDailyTrackerSomePeriod(period = 7) {
+        let date = Number(await this.currentDateGridLocator.textContent())
+        console.log(date)
+        for (let i = 1; i < period; i++) {
+          let newDate = period - i
+          if (newDate === 1) {
+            break
+          }
+          await this.gridCellLocator.nth(newDate).click()
+          await this.passTrackAllNowFlow()
+        }
     }
 }

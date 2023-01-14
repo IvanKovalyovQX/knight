@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { App } from './pages/app';
 import { dataSet, defaultMessages } from './utils/dataSet';
 
-const data = ['1', '2'
+const data = ['1', 
 // '2', '3', '4', '5', '6', '7', '8', '9', '10',
 // '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
 // '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
@@ -38,12 +38,14 @@ for (const dataUsage of data) {
     await app.plannerPage.addAppointment()
     await app.plannerPage.addAppointment()
     await app.plannerPage.addTodos()
-    await app.plannerPage.enableAllTrackers()
-    await app.plannerPage.passTrackAllnowFlow()
     await app.connectPage.open()
     await app.connectPage.addMessage('Hey')
     await app.connectPage.addMessage(defaultMessages)
     await app.connectPage.addMessage(defaultMessages)
+    await app.plannerPage.open()
+    await app.plannerPage.enableAllTrackers()
+    await app.plannerPage.passTrackAllNowFlow()
+    await app.plannerPage.addDailyTrackerSomePeriod()
   
   });
 }
